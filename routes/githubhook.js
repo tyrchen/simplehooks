@@ -17,7 +17,7 @@ var repos = [
 function deploy(repo, ref, data) {
     console.log('deploy:', repo, ref);
     var name = 'github_' + repo + '_' + ref;
-    var path = '/home/dev/bin';
+    var path = '/home/dev/bin/';
     var cmd = path + name + ' > /tmp/' + name + '.log';
     exec(cmd, function(err, output) { log(repo, ref, data); console.log(err); });
 }
