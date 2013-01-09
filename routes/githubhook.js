@@ -3,14 +3,14 @@
  * github hook processing
  */
 var fs = require('fs');
-var spawn = require('child_process').spawn;
 var _ = require('underscore');
+var kue = require('kue')
+    , jobs = kue.createQueue();
 
 var repos = [
     {name: 'cayman', ref: 'master', action: deploy},
     {name: 'cayman', ref: 'live', action: log},
     {name: 'barr', ref: 'master', action: deploy}
-
 ];
 
 
@@ -19,8 +19,12 @@ function deploy(repo, ref, data) {
     var path = '/home/dev/bin/';
     //var path = '/Users/tchen/bin/';
     var cmd = path + name;
-    spawn(cmd);
-    console.log('deploy:', repo, ref, ' spawn', cmd);
+
+    console.log('deploy:', repo, ref);
+
+    jobs.create('deploy', {
+        command: cmd
+    }).save();
 }
 
 function log(repo, ref, data) {
