@@ -3,7 +3,7 @@
  * github hook processing
  */
 var fs = require('fs');
-var exec = require('child_process').exec;
+var spawn = require('child_process').spawn;
 var _ = require('underscore');
 
 var repos = [
@@ -18,8 +18,9 @@ function deploy(repo, ref, data) {
     console.log('deploy:', repo, ref);
     var name = 'github_' + repo + '_' + ref;
     var path = '/home/dev/bin/';
-    var cmd = 'nohup ' + path + name + ' > /tmp/' + name + '.log &';
-    exec(cmd, function(err, output) { log(repo, ref, data); console.log(err); });
+    //var path = '/Users/tchen/bin/';
+    var cmd = path + name + ' > /tmp/' + name + '.log';
+    spawn(cmd);
 }
 
 function log(repo, ref, data) {
