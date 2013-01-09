@@ -15,12 +15,12 @@ var repos = [
 
 
 function deploy(repo, ref, data) {
-    console.log('deploy:', repo, ref);
     var name = 'github_' + repo + '_' + ref;
     var path = '/home/dev/bin/';
     //var path = '/Users/tchen/bin/';
-    var cmd = path + name + ' > /tmp/' + name + '.log';
+    var cmd = path + name;
     spawn(cmd);
+    console.log('deploy:', repo, ref, ' spawn', cmd);
 }
 
 function log(repo, ref, data) {
@@ -36,6 +36,7 @@ function log(repo, ref, data) {
 
 exports.githubhook = function(req, res){
     var payload;
+    req.connection.setTimeout(5000 * 60);
     if (typeof req.body.payload === 'object') {
         payload = req.body.payload;
     } else {
