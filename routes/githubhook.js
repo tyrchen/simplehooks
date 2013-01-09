@@ -16,7 +16,7 @@ var repos = [
 
 function deploy(repo, ref, data) {
     console.log('deploy:', repo, ref);
-    var cmd = '/home/dev/bin/github_' + repo + '_' + ref;
+    var cmd = 'nohup /home/dev/bin/github_' + repo + '_' + ref + ' &';
     exec(cmd, function(err, output) { log(repo, ref, data); console.log(err); });
 }
 
