@@ -3,14 +3,46 @@
  * github hook processing
  */
 var fs = require('fs');
+var exec = require('child_process').exec;
+var _ = require('underscore');
+
+var repos = [
+    {name: 'cayman', ref: 'master', action: deploy},
+    {name: 'cayman', ref: 'live', action: log},
+    {name: 'barr', ref: 'master', action: deploy}
+
+];
+
+
+function deploy(repo, ref, data) {
+    console.log('deploy:', repo, ref);
+    var cmd = '~/bin/github_' + repos + '_' + ref;
+    exec(cmd, function(err, output) { log(repo, ref, data); console.log(err); });
+}
+
+function log(repo, ref, data) {
+    var info = '\n\nInfo for ' + repo + ': ' + ref + ':\n';
+    if (typeof data === 'object') {
+        info += JSON.stringify(data) + '\n\n';
+    } else {
+        info += data + '\n\n';
+    }
+    fs.appendFile('/tmp/github_' + repo + '_' + ref, info, function(err) {});
+}
+
 
 exports.githubhook = function(req, res){
-    fs.writeFile('/tmp/github_post', JSON.stringify(req.body), function(err) {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log('file has been saved.');
-        }
-    })
-    res.send('ok');
+    var payload;
+    if (typeof req.body.payload === 'object') {
+        payload = req.body.payload;
+    } else {
+        payload = JSON.parse(req.body.payload);
+    }
+
+    _.each(repos, function(repo) {
+       if(repo.name === payload.repository.name && payload.ref.indexOf(repo.ref) >= 0) {
+           repo.action(repo.name, repo.ref, payload);
+       }
+       res.send('ok');
+    });
 };
