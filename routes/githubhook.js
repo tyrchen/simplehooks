@@ -9,14 +9,16 @@ var _ = require('underscore');
 var repos = [
     {name: 'cayman', ref: 'master', action: deploy},
     {name: 'cayman', ref: 'live', action: log},
-    {name: 'barr', ref: 'master', action: log}
+    {name: 'barr', ref: 'master', action: deploy}
 
 ];
 
 
 function deploy(repo, ref, data) {
     console.log('deploy:', repo, ref);
-    var cmd = 'nohup /home/dev/bin/github_' + repo + '_' + ref + ' &';
+    var name = 'github_' + repo + '_' + ref;
+    var path = '/home/dev/bin';
+    var cmd = path + name + ' > /tmp/' + name + '.log';
     exec(cmd, function(err, output) { log(repo, ref, data); console.log(err); });
 }
 
